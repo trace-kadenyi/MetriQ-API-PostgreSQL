@@ -2,31 +2,6 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-// router.get("/check", async (req, res) => {
-// const { target: url } = req.query;
-
-//   // Simple sanity check for format
-//   try {
-//     new URL(url);
-//   } catch {
-//     return res
-//       .status(400)
-//       .json({ success: false, message: "Invalid URL format." });
-//   }
-
-//   // Try fetching the URL
-//   try {
-//     const response = await axios.get(url, { timeout: 5000 });
-//     res.json({ success: true, status: response.status });
-//   } catch (err) {
-//     res.status(400).json({
-//       success: false,
-//       message: "URL is unreachable or does not exist.",
-//       error: err.message,
-//     });
-//   }
-// });
-
 router.post("/check", async (req, res) => {
   const { url } = req.body;
 
