@@ -27,7 +27,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
-app.use('/', require("./routes/root"))
+app.use("/", require("./routes/root"));
+app.use("/api/url", require("./routes/urlChecker"));
 
 // start server
 mongoose.connection.once("open", () => {
