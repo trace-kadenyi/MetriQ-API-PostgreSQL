@@ -3,7 +3,8 @@ const fetchPageSpeedData = require("../utils/fetchPageSpeedData");
 
 const createOrUpdateReport = async (req, res) => {
   try {
-    const { url } = req.body;
+    const rawUrl = req.body.url;
+    const url = rawUrl.trim();
 
     const [mobileResult, desktopResult] = await Promise.all([
       fetchPageSpeedData(url, "mobile"),
@@ -43,13 +44,15 @@ const createOrUpdateReport = async (req, res) => {
 
 const getReport = async (req, res) => {
   try {
-    const url = req.query.url; // <-- get from query param, not body
+    const rawUrl = req.query.url; // <-- get from query param, not body
 
-    if (!url) {
+    if (!rawUrl) {
       return res
         .status(400)
         .json({ success: false, message: "Missing url parameter" });
     }
+
+    const url = rawUrl.trim();
 
     const report = await Report.findOne({ url });
 
