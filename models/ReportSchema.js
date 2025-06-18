@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
-const reportSchema = new mongoose.Schema(
+const metricsSchema = new mongoose.Schema({
+  value: { type: String, required: true },
+  status: { type: String, required: true },
+});
+
+const reportEntrySchema = new mongoose.Schema(
   {
-    url: { type: String, required: true }, // URL being reported
     scores: {
       mobile: {
         performance: { type: Number, required: true },
@@ -19,65 +23,27 @@ const reportSchema = new mongoose.Schema(
     },
     metrics: {
       mobile: {
-        "Largest Contentful Paint": {
-          value: { type: String, required: true }, // Largest Contentful Paint value
-          status: { type: String, required: true }, // Status of LCP
-        },
-        "First Contentful Paint": {
-          value: { type: String, required: true }, // First Contentful Paint value
-          status: { type: String, required: true }, // Status of FCP
-        },
-
-        "First Input Delay": {
-          value: { type: String, required: true }, // First Input Delay value
-          status: { type: String, required: true }, // Status of FID
-        },
-        "Cumulative Layout Shift": {
-          value: { type: String, required: true }, // Cumulative Layout Shift value
-          status: { type: String, required: true }, // Status of CLS
-        },
-        "Speed Index": {
-          value: { type: String, required: true }, // Speed Index value
-          status: { type: String, required: true }, // Status of Speed Index
-        },
-        "Total Blocking Time": {
-          value: { type: String, required: true }, // Total Blocking Time value
-          status: { type: String, required: true }, // Status of TBT
-        },
+        "Largest Contentful Paint": metricsSchema,
+        "First Contentful Paint": metricsSchema,
+        "First Input Delay": metricsSchema,
+        "Cumulative Layout Shift": metricsSchema,
+        "Speed Index": metricsSchema,
+        "Total Blocking Time": metricsSchema,
       },
       desktop: {
-        "Largest Contentful Paint": {
-          value: { type: String, required: true }, // Largest Contentful Paint value
-          status: { type: String, required: true }, // Status of LCP
-        },
-        "First Contentful Paint": {
-          value: { type: String, required: true }, // First Contentful Paint value
-          status: { type: String, required: true }, // Status of FCP
-        },
-
-        "First Input Delay": {
-          value: { type: String, required: true }, // First Input Delay value
-          status: { type: String, required: true }, // Status of FID
-        },
-        "Cumulative Layout Shift": {
-          value: { type: String, required: true }, // Cumulative Layout Shift value
-          status: { type: String, required: true }, // Status of CLS
-        },
-        "Speed Index": {
-          value: { type: String, required: true }, // Speed Index value
-          status: { type: String, required: true }, // Status of Speed Index
-        },
-        "Total Blocking Time": {
-          value: { type: String, required: true }, // Total Blocking Time value
-          status: { type: String, required: true }, // Status of TBT
-        },
+        "Largest Contentful Paint": metricsSchema,
+        "First Contentful Paint": metricsSchema,
+        "First Input Delay": metricsSchema,
+        "Cumulative Layout Shift": metricsSchema,
+        "Speed Index": metricsSchema,
+        "Total Blocking Time": metricsSchema,
       },
     },
     suggestions: {
       mobile: [
         {
           title: { type: String, required: true },
-          displayValue: { type: String }, // Can be null or empty sometimes
+          displayValue: { type: String },
           description: { type: String },
           score: { type: Number },
         },
@@ -91,6 +57,14 @@ const reportSchema = new mongoose.Schema(
         },
       ],
     },
+  },
+  { timestamps: true }
+);
+
+const reportSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true, unique: true },
+    reports: [reportEntrySchema],
   },
   { timestamps: true }
 );
