@@ -3,10 +3,12 @@ const router = express.Router();
 const {
   createOrUpdateReport,
   getReport,
+  createReport,
+  getReportsByUrl,
 } = require("../controllers/reportController");
 
-router.post("/report", createOrUpdateReport);
+router.post("/report", createReport);
 
-router.get("/report", getReport);
+router.get("/report", getReportsByUrl);
 
 module.exports = router;
