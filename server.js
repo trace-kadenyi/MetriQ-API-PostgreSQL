@@ -11,8 +11,7 @@ const port = process.env.PORT || 4000;
 // routes
 const root = require("./routes/root");
 const urlChecker = require("./routes/urlChecker");
-app.use("/api/url", urlChecker);
-const reportRoutes = require('./routes/reportRoutes');
+const reportRoutes = require("./routes/reportRoutes");
 // connect to MongoDB
 mongoose.connect(process.env.DATABASE_URI);
 
@@ -33,8 +32,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/", root);
-
-app.use('/api/url', reportRoutes); 
+app.use("/api/url", urlChecker);
+app.use("/api/url", reportRoutes);
 
 // start server
 mongoose.connection.once("open", () => {
