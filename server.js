@@ -12,6 +12,8 @@ const port = process.env.PORT || 4000;
 const root = require("./routes/root");
 const urlChecker = require("./routes/urlChecker");
 const reportRoutes = require("./routes/reportRoutes");
+const summarizeRoutes = require("./routes/summarize");
+
 // connect to MongoDB
 mongoose.connect(process.env.DATABASE_URI);
 
@@ -34,6 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", root);
 app.use("/api/url", urlChecker);
 app.use("/api/url", reportRoutes);
+app.use("/api/summarize", summarizeRoutes);
 
 // start server
 mongoose.connection.once("open", () => {
