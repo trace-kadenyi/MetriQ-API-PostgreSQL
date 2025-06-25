@@ -13,6 +13,7 @@ const root = require("./routes/root");
 const urlChecker = require("./routes/urlChecker");
 const reportRoutes = require("./routes/reportRoutes");
 const summarizeRoutes = require("./routes/summarize");
+const favouritesRoutes = require("./routes/favouritesRoutes");
 
 // connect to MongoDB
 mongoose.connect(process.env.DATABASE_URI);
@@ -37,6 +38,7 @@ app.use("/", root);
 app.use("/api/url", urlChecker);
 app.use("/api/url", reportRoutes);
 app.use("/api/summarize", summarizeRoutes);
+app.use("/api/favourites", favouritesRoutes);
 
 // start server
 mongoose.connection.once("open", () => {
