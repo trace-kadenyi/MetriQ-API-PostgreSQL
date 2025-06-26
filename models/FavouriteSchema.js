@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const favouritesSchema = new mongoose.Schema(
   {
-    // Up to five unique URL strings
+    userId: { type: String, required: true, unique: true }, // 👈 important for anon-based tracking
     favourites: {
       type: [String],
       validate: [
