@@ -14,6 +14,7 @@ const urlChecker = require("./routes/urlChecker");
 const reportRoutes = require("./routes/reportRoutes");
 const summarizeRoutes = require("./routes/summarize");
 const favouritesRoutes = require("./routes/favouritesRoutes");
+const comparisonRoutes = require("./routes/comparisonRoutes");
 
 // connect to MongoDB
 mongoose.connect(process.env.DATABASE_URI);
@@ -39,6 +40,7 @@ app.use("/api/url", urlChecker);
 app.use("/api/url", reportRoutes);
 app.use("/api/summarize", summarizeRoutes);
 app.use("/api/favourites", favouritesRoutes);
+app.use("/api/", comparisonRoutes);
 
 // start server
 mongoose.connection.once("open", () => {
