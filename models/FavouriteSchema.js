@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// favourites schema
 const favouritesSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true, unique: true }, // 👈 important for anon-based tracking
