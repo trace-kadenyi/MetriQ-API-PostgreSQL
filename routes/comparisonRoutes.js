@@ -1,10 +1,7 @@
 const express = require("express");
-const {
-  createComparison,
-  getComparisonsByAnonId,
-} = require("../controllers/comparisonController");
-
 const router = express.Router();
+
+const { createComparison } = require("../controllers/comparisonController");
 
 router.post("/compare", createComparison);
 
