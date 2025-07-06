@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-/* ----- tiny re‑usable blocks ----- */
+// Score schema block
 const scoreSchema = new mongoose.Schema(
   {
     performance: { type: Number, required: true, min: 0, max: 100 },
@@ -11,11 +11,13 @@ const scoreSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// score block schema for mobile and desktop
 const scoreBlockSchema = new mongoose.Schema(
   { mobile: scoreSchema, desktop: scoreSchema },
   { _id: false }
 );
 
+// competitor schema block
 const competitorSchema = new mongoose.Schema(
   {
     url: { type: String, required: true },
