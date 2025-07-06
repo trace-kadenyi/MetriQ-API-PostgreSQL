@@ -1,5 +1,7 @@
 const axios = require("axios");
 
+const getUserFriendlySuggestions = require("./getUserFriendlySuggestions");
+
 // fetch pagespeed data func
 const fetchPageSpeedData = async (url, strategy) => {
   const API_KEY = process.env.PAGESPEED_API_KEY;
