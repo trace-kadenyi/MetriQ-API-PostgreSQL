@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  createOrUpdateReport,
-  getReport,
   createReport,
   getReportsByUrl,
 } = require("../controllers/reportController");
