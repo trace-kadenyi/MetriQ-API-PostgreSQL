@@ -1,6 +1,7 @@
 const Report = require("../models/ReportSchema");
 const fetchPageSpeedData = require("../utils/fetchPageSpeedData");
 
+// create report func
 const createReport = async (req, res) => {
   try {
     const rawUrl = req.body.url;
@@ -64,6 +65,7 @@ const createReport = async (req, res) => {
   }
 };
 
+// get reports by url func
 const getReportsByUrl = async (req, res) => {
   try {
     const rawUrl = req.query.url;
