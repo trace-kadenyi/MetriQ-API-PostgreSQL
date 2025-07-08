@@ -32,6 +32,12 @@ router.get(
   }
 );
 
+// me
+router.get("/me", (req, res) => {
+  // req.user is set by passport.session() if the cookie is valid
+  res.json({ user: req.user ?? null });
+});
+
 /* ─────── LOGOUT ─────── */
 router.post("/logout", (req, res) => {
   req.logout(() => {
