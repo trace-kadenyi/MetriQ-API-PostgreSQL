@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
     name: { type: String },
     avatar: { type: String } /** Your existing per‑user prefs */,
     theme: { type: String, enum: ["light", "dark"], default: "light" },
-    favourites: [{ type: String }], // keep if you still store them here
   },
   { timestamps: true }
 );
