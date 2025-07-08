@@ -28,7 +28,12 @@ mongoose.connect(process.env.DATABASE_URI);
 app.use(express.urlencoded({ extended: false }));
 
 // cors
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // 👉  your React dev origin
+    credentials: true, // 👉  allow cookies / Authorization header
+  })
+);
 
 // body-parser
 app.use(bodyparser.json());
@@ -43,7 +48,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax", // so GitHub → frontend redirect works     secure: process.env.NODE_ENV === "production", // true only on HTTPS prod
+    },
     store: MongoStore.create({
       mongoUrl: process.env.DATABASE_URI, // reuse your Mongo connection
       ttl: 24 * 60 * 60, // keep sessions 1 day
