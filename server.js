@@ -3,8 +3,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyparser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const cookieSession = require("cookie-session");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
 const path = require("path");
 
@@ -33,18 +33,21 @@ app.use(cors());
 // body-parser
 app.use(bodyparser.json());
 
-// cookie-parser
-app.use(cookieParser());
-
 // middleware to handle json data
 app.use(express.json());
 
-// cookie session
+// express-session  (works with Passport)
 app.use(
-  cookieSession({
+  session({
     name: "oauth-session",
     secret: process.env.SESSION_SECRET,
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+    store: MongoStore.create({
+      mongoUrl: process.env.DATABASE_URI, // reuse your Mongo connection
+      ttl: 24 * 60 * 60, // keep sessions 1 day
+    }),
   })
 );
 
