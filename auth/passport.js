@@ -1,8 +1,7 @@
-// auth/passport.js
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GithubStrategy = require("passport-github2").Strategy;
-const User = require("../models/User");
+const User = require("../models/UserSchema");
 
 passport.serializeUser((user, done) => done(null, user.id)); // Mongo _id
 passport.deserializeUser((id, done) =>
