@@ -1,15 +1,20 @@
 const Favourites = require("../models/FavouriteSchema");
 
-/** Helper – get anon ID from header */
-const extractUserId = (req) => req.header("x-anon-id") || null;
+/** Helper – returns { owner: … } *or* { anonId: … }  */
+const extractIdent = (req) => {
+  if (req.userId) return { owner: req.userId }; // logged‑in
+  const anonId = req.header("x-anon-id");
+  if (anonId) return { anonId }; // anonymous
+  return null; // neither => error
+};
 
 /** Helper – find or create per-user favourites doc */
-const getList = async (userId) => {
-  if (!userId) throw new Error("Missing anonymous user ID");
+const getList = async (ident) => {
+  if (!ident) throw new Error("Missing user identifier");
 
-  let doc = await Favourites.findOne({ userId });
+  let doc = await Favourites.findOne(ident);
   if (!doc) {
-    doc = await Favourites.create({ userId, favourites: [] });
+    doc = await Favourites.create({ ...ident, favourites: [] });
   }
   return doc;
 };
@@ -17,8 +22,8 @@ const getList = async (userId) => {
 /** GET /api/favourites → return current favourites for this user */
 const getFavourites = async (req, res) => {
   try {
-    const userId = extractUserId(req);
-    const list = await getList(userId);
+    const ident = extractIdent(req);
+    const list = await getList(ident);
     return res.status(200).json({
       success: true,
       favourites: list.favourites,
@@ -35,7 +40,7 @@ const getFavourites = async (req, res) => {
 /** POST /api/favourites/toggle → add or remove a URL */
 const toggleFavourite = async (req, res) => {
   try {
-    const userId = extractUserId(req);
+    const ident = extractIdent(req);
     const { url } = req.body;
 
     if (!url || typeof url !== "string") {
@@ -45,7 +50,7 @@ const toggleFavourite = async (req, res) => {
       });
     }
 
-    const list = await getList(userId);
+    const list = await getList(ident);
     const alreadySaved = list.favourites.includes(url);
 
     if (alreadySaved) {
