@@ -2,14 +2,17 @@
 
 The backend server for **MetriQ**, a performance benchmarking platform that analyzes and compares website metrics using Google PageSpeed Insights and AI-powered summaries. Built with **Node.js**, **Express**, and **MongoDB**.
 
+---
+
 ## 🧠 Stack
 
 - Node.js + Express (server)
 - MongoDB (database)
+- Passport.js (Google & GitHub OAuth)
 - Axios (API requests)
-- OpenRouter / DeepSeek (AI summaries)
+- OpenRouter + DeepSeek (AI summaries)
 - Google PageSpeed Insights API (site audits)
-- Deployed on Render / Vercel (or your preferred backend host)
+- Deployed on Vercel
 
 ---
 
@@ -18,24 +21,43 @@ The backend server for **MetriQ**, a performance benchmarking platform that anal
 ```
 /backend
 │
+├── auth/
+│   └── passport.js
+│
 ├── controllers/
-│   ├── reportController.js      # PageSpeed data handling
-│   ├── summaryController.js     # AI summaries (DeepSeek)
-│   └── userThemeController.js   # Dark/light theme API
+│   ├── aiSummaryController.js
+│   ├── comparisonController.js
+│   ├── competitorAiAnalysisController.js
+│   ├── favouriteController.js
+│   ├── reportController.js
+│   └── userThemeController.js
 │
 ├── models/
-│   └── Report.js                # MongoDB schema
+│   ├── ReportSchema.js
+│   ├── ComparisonSchema.js
+│   ├── FavouriteSchema.js
+│   └── UserSchema.js
 │
 ├── routes/
+│   ├── comparisonRoutes.js
+│   ├── competitorAiAnalysisRoutes.js
+│   ├── favouritesRoutes.js
 │   ├── reportRoutes.js
-│   ├── summaryRoutes.js
-│   └── userThemeRoutes.js
+│   ├── root.js
+│   ├── summarize.js
+│   ├── urlChecker.js
+│   └── userRoutes.js
 │
 ├── utils/
-│   └── fetchPageSpeedData.js    # Utility for PSI fetch/format
+│   ├── fetchPageSpeedData.js
+│   ├── getUserFriendlySuggestions.js
+│   └── getUserId.js
 │
-├── .env                         # API keys, Mongo URI
-├── server.js                    # Entry point
+├── views/
+│   └── index.html
+│
+├── .env
+├── server.js
 └── README.md
 ```
 
@@ -46,8 +68,8 @@ The backend server for **MetriQ**, a performance benchmarking platform that anal
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/metricmind-api.git
-cd metricmind-api
+git clone https://github.com/trace-kadenyi/MetriQ-API.git
+cd MetriQ-API
 ```
 
 ### 2. Install dependencies
@@ -60,18 +82,25 @@ npm install
 
 ```env
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
-GOOGLE_API_KEY=your_pagespeed_api_key
+DATABASE_URI=your_mongodb_connection_string
+PAGESPEED_API_KEY=google_api_key
 OPENROUTER_API_KEY=your_openrouter_key
+GOOGLE_ID=your_google_client_id
+GOOGLE_SECRET=your__secret
+GITHUB_ID=your_github_client_id
+GITHUB_SECRET=your_github_client_secret
+SESSION_SECRET=your_cookie_secret
+
+FRONTEND_URL=http://localhost:5173
 ```
 
 ### 4. Run the server
 
 ```bash
-npm run dev
+npm start
 ```
 
-The API will be running at `http://localhost:5000`.
+The API will be running at `http://localhost:4000`.
 
 ---
 
@@ -80,19 +109,35 @@ The API will be running at `http://localhost:5000`.
 ### 🔍 PageSpeed Reports
 
 - **POST** `/api/reports`
+
   - Body: `{ url: "https://example.com" }`
-  - Description: Fetches PageSpeed data (mobile + desktop), saves to DB.
+  - Fetches PageSpeed data (mobile + desktop), saves to DB
 
 - **GET** `/api/reports/:url`
-  - Description: Fetches last 5 reports for a given URL.
+  - Fetches last 5 reports for a given URL
 
 ---
 
 ### 🤖 AI Summaries (DeepSeek via OpenRouter)
 
-- **POST** `/api/summary`
+- **POST** `/api/summarize`
   - Body: `{ reports: [ ... ] }`
-  - Description: Returns a generated summary (not saved to DB).
+  - Returns a generated summary (not saved to DB)
+
+---
+
+### 📊 Competitor Comparison
+
+- **POST** `/api/comparison`
+- **POST** `/api/competitor-ai-analysis`
+
+---
+
+### ❤️ Favourites
+
+- **GET** `/api/favourites`
+- **POST** `/api/favourites`
+- **DELETE** `/api/favourites/:id`
 
 ---
 
@@ -103,42 +148,65 @@ The API will be running at `http://localhost:5000`.
 
 ---
 
+### 📌 API Routes Summary
+
+| Endpoint                    | Method(s)      | Description                                         |
+| --------------------------- | -------------- | --------------------------------------------------- |
+| `/api/auth/google`          | `GET`          | Initiate Google OAuth login                         |
+| `/api/auth/google/callback` | `GET`          | Google OAuth callback and redirect                  |
+| `/api/auth/github`          | `GET`          | Initiate GitHub OAuth login                         |
+| `/api/auth/github/callback` | `GET`          | GitHub OAuth callback and redirect                  |
+| `/api/auth/me`              | `GET`          | Get currently authenticated user                    |
+| `/api/auth/logout`          | `POST`         | Logout the user and clear session                   |
+| `/api/user/theme`           | `GET`, `PATCH` | Get or update theme preference                      |
+| `/api/url/check`            | `POST`         | Check reachability and validity of a URL            |
+| `/api/url/report`           | `POST`, `GET`  | Create new PageSpeed report or fetch last 5 reports |
+| `/api/summarize`            | `POST`         | Generate AI summary from given reports              |
+| `/api/favourites`           | `GET`          | Get all favourited reports                          |
+| `/api/favourites/toggle`    | `POST`         | Toggle favourite state of a report                  |
+| `/api/favourites/claim`     | `POST`         | Transfer anonymous favourites to authenticated user |
+| `/api/compare`              | `POST`         | Compare multiple sites and store as group           |
+| `/api/ai/comparison`        | `POST`         | Generate AI analysis for competitors' performance   |
+| `/` or `/index.html`        | `GET`          | Serve static homepage (for testing or fallback)     |
+
+---
+
 ## 🧰 Dev Scripts
 
 ```bash
-npm run dev      # Run with nodemon
-npm start        # Run without nodemon
+npm start        # Run with nodemon
 ```
 
 ---
 
 ## ✅ Features
 
+- Account sign up with Google or Github
 - Fetch and store PageSpeed Insights data for mobile and desktop
 - Store up to 5 recent reports per URL
-- Generate AI-powered summaries of report data via DeepSeek
+- Generate AI-powered analyses of report data via DeepSeek
 - Compare multiple competitors anonymously
-- Theme preference endpoints for frontend sync
-- Well-structured modular Express setup
+- Generate AI-powered analyses of how the user stacks up against competitors
+- Manage user favourites
+- Store and sync theme preferences
+- Clean, modular Express structure
 
 ---
 
 ## 📌 Todo / In Progress
 
-- [ ] Rate limiting or usage limits
-- [ ] PDF report generation backend (optional: Puppeteer)
-- [ ] Auth system (JWT/anonymous fallback)
+- [ ] Rate limiting or usage quotas
 
 ---
 
 ## 💡 Notes
 
-- The frontend (MERN) app is in a separate repo: [MetriQ](https://github.com/metricmind/zyntra)
-- All data persists in MongoDB Atlas
-- AI summaries are ephemeral and client-triggered only (not auto-generated/stored)
+- The frontend (MERN) app is in a separate repo: [MetriQ Frontend](https://github.com/trace-kadenyi/MetriQ.git)
+- User accounts, reports and favourites are stored in MongoDB Atlas
+- Competitor comparison reports and Ai summaries are generated on-demand and not stored permanently
 
 ---
 
 ## 📄 License
 
-MIT License. © Trey Kadenyi 2025.
+MIT License. © Tracey Kadenyi 2025.
