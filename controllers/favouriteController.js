@@ -112,10 +112,15 @@ const claimFavourites = async (req, res) => {
       await userDoc.save();
       await anonDoc.deleteOne();
     } else {
-      // just convert the anon doc into the owner's
-      anonDoc.owner = userId;
-      anonDoc.anonId = null;
-      await anonDoc.save();
+      // Safety: prevent assigning owner if already exists
+      const existing = await Favourites.findOne({ owner: userId });
+      if (existing) {
+        await anonDoc.deleteOne(); // or optionally merge
+      } else {
+        anonDoc.owner = userId;
+        anonDoc.anonId = null;
+        await anonDoc.save();
+      }
     }
 
     return res.status(200).json({ success: true });
