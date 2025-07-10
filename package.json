@@ -1,15 +1,26 @@
 {
-  "name": "metricmind-api",
+  "name": "metriq-api",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "metrics",
+    "performance",
+    "audit",
+    "web performance",
+    "pagespeed",
+    "google lighthouse",
+    "comparison",
+    "AI summary",
+    "MERN stack",
+    "metriq"
+  ],
+  "author": "Tracey Kadenyi",
   "license": "ISC",
-  "description": "",
+  "description": "Backend API for MetriQ — a web performance auditing and comparison tool using Google PageSpeed Insights and AI-powered summaries.",
   "devDependencies": {
     "nodemon": "^3.1.10"
   },
