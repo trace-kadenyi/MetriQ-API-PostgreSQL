@@ -65,7 +65,7 @@ const createReport = async (req, res) => {
         message: "No PageSpeed data available",
       });
     }
-
+    // handle status 500
     res.status(500).json({
       success: false,
       message: "Error generating report",
