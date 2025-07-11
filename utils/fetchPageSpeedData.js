@@ -11,7 +11,6 @@ const fetchPageSpeedData = async (url, strategy) => {
   try {
     const res = await axios.get(requestUrl);
     const data = res.data;
-
     const lighthouseResult = data.lighthouseResult;
 
     // ⛔️ Check for missing lighthouse data
@@ -39,7 +38,7 @@ const fetchPageSpeedData = async (url, strategy) => {
       ),
     };
 
-    // metrics
+    // get metric
     const getMetric = (key) => ({
       value: lighthouseResult.audits[key]?.displayValue || "N/A",
       status:
@@ -52,6 +51,7 @@ const fetchPageSpeedData = async (url, strategy) => {
           : "n/a",
     });
 
+    // metrics
     const metrics = {
       "First Contentful Paint": getMetric("first-contentful-paint"),
       "Largest Contentful Paint": getMetric("largest-contentful-paint"),
