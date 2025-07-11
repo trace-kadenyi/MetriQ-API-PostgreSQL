@@ -12,33 +12,41 @@ const fetchPageSpeedData = async (url, strategy) => {
     const res = await axios.get(requestUrl);
     const data = res.data;
 
-    // ⛔️ Check for missing lighthouse result or categories
+    const lighthouseResult = data.lighthouseResult;
+
+    // ⛔️ Check for missing lighthouse data
     if (
-      !data.lighthouseResult ||
-      !data.lighthouseResult.categories ||
-      !data.lighthouseResult.audits
+      !lighthouseResult ||
+      !lighthouseResult.categories ||
+      !lighthouseResult.audits
     ) {
-      throw new Error("No PageSpeed data available");
+      const friendlyError = new Error("No PageSpeed data available");
+      friendlyError.code = 204; // Custom signal
+      throw friendlyError;
     }
 
-    // results
-    const categories = data.lighthouseResult.categories;
-    const audits = data.lighthouseResult.audits;
     // scores
     const scores = {
-      performance: Math.round(categories.performance?.score * 100),
-      accessibility: Math.round(categories.accessibility?.score * 100),
-      seo: Math.round(categories.seo?.score * 100),
-      bestPractices: Math.round(categories["best-practices"]?.score * 100),
+      performance: Math.round(
+        lighthouseResult.categories.performance?.score * 100
+      ),
+      accessibility: Math.round(
+        lighthouseResult.categories.accessibility?.score * 100
+      ),
+      seo: Math.round(lighthouseResult.categories.seo?.score * 100),
+      bestPractices: Math.round(
+        lighthouseResult.categories["best-practices"]?.score * 100
+      ),
     };
+
     // metrics
     const getMetric = (key) => ({
-      value: audits[key]?.displayValue || "N/A",
+      value: lighthouseResult.audits[key]?.displayValue || "N/A",
       status:
-        audits[key]?.scoreDisplayMode === "numeric"
-          ? audits[key]?.score >= 0.9
+        lighthouseResult.audits[key]?.scoreDisplayMode === "numeric"
+          ? lighthouseResult.audits[key]?.score >= 0.9
             ? "good"
-            : audits[key]?.score >= 0.5
+            : lighthouseResult.audits[key]?.score >= 0.5
             ? "average"
             : "poor"
           : "n/a",
@@ -54,7 +62,9 @@ const fetchPageSpeedData = async (url, strategy) => {
     };
 
     // 🌟 Get Friendly Performance Suggestions
-    const performanceSuggestions = getUserFriendlySuggestions(audits);
+    const performanceSuggestions = getUserFriendlySuggestions(
+      lighthouseResult.audits
+    );
 
     return { scores, metrics, suggestions: performanceSuggestions };
   } catch (err) {
@@ -63,15 +73,21 @@ const fetchPageSpeedData = async (url, strategy) => {
       err.response?.data || err.message
     );
 
-    // 👇 Ensure Axios errors don’t block our custom message
+    // 🧼 Convert common failure cases into friendly "no data" message
+    const errMsg = err.response?.data?.error?.message || err.message;
+
     if (
-      err.response?.data?.error?.message?.includes("HTTPS") || // example: unsupported protocol
-      err.response?.data?.error?.message?.includes("Blocked") ||
-      err.message === "No PageSpeed data available"
+      errMsg.includes("HTTPS") || // e.g. unsupported protocol
+      errMsg.includes("Blocked") ||
+      errMsg.includes("Unable to process request") ||
+      errMsg.includes("No PageSpeed data available")
     ) {
-      throw new Error("No PageSpeed data available");
+      const friendlyError = new Error("No PageSpeed data available");
+      friendlyError.code = 204;
+      throw friendlyError;
     }
 
+    // Re-throw for unexpected errors
     throw err;
   }
 };
