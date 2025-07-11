@@ -59,7 +59,7 @@ const createReport = async (req, res) => {
     console.error("Failed to create report:", err.message);
 
     // ✅ Handle no data case from fetchPageSpeedData
-    if (err.message === "No PageSpeed data available") {
+    if (err.message === "No PageSpeed data available" || err.code === 204) {
       return res.status(400).json({
         success: false,
         message: "No PageSpeed data available",
