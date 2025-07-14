@@ -1,20 +1,5 @@
 const axios = require("axios");
 
-/**
- * POST /ai/comparison
- * Body:
- *   {
- *     comparison: {
- *       userSiteUrl: "https://…",
- *       userScores: { mobile:{…}, desktop:{…} },
- *       competitors: [
- *         { url:"https://…", label:"", scores:{ mobile:{…}, desktop:{…} } },
- *         …
- *       ]
- *     },
- *     format: "markdown" | "json"  // optional, default = markdown
- *   }
- */
 const createAICompetitorAnalysis = async (req, res) => {
   const { comparison, format = "markdown" } = req.body ?? {};
   if (!comparison)
