@@ -24,11 +24,6 @@ router.post("/check", async (req, res) => {
 
   /* ---------- reachability probe ---------- */
   try {
-    /*
-     *  validateStatus: () => true
-     *  lets us receive *all* HTTP responses
-     *  (Axios normally rejects 4xx/5xx).
-     */
     const response = await axios.get(url, {
       timeout: 5000,
       validateStatus: () => true,
