@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 // cors
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, // 👉  your React dev origin
+    origin: "https://metri-q.vercel.app/", // 👉  your React dev origin
     credentials: true, // 👉  allow cookies / Authorization header
   })
 );
