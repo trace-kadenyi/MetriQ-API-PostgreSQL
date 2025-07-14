@@ -20,25 +20,6 @@ const createAICompetitorAnalysis = async (req, res) => {
   if (!comparison)
     return res.status(400).json({ error: "No comparison data supplied" });
 
-  // testing testing
-  if (process.env.MOCK_AI === "true") {
-    return res.json({
-      analysis: `
-### Executive Summary
-*Mocked AI output so you can test the loader / markdown renderer without hitting DeepSeek.*
-
-### Findings
-- Performance mobile 45, desktop 80
-- Accessibility good on both
-
-### Recommendations
-1. Enable lazy‑loading
-2. Compress images
-`,
-      format,
-    });
-  }
-
   const describe = (label, scores) => {
     const { mobile, desktop } = scores;
     return [
