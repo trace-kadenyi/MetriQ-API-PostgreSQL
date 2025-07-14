@@ -7,7 +7,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
 const path = require("path");
-
+// port
 const port = process.env.PORT || 4000;
 
 // routes
@@ -60,16 +60,16 @@ app.use(
   })
 );
 
+// passport auth
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use("/api/auth", authRoutes);
 
 // middleware to handle static files
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/", root);
+app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/url", urlChecker);
 app.use("/api/url", reportRoutes);
