@@ -81,7 +81,6 @@ npm install
 ### 3. Create a `.env` file
 
 ```env
-PORT=5000
 DATABASE_URI=your_mongodb_connection_string
 PAGESPEED_API_KEY=google_api_key
 OPENROUTER_API_KEY=your_openrouter_key
@@ -90,8 +89,9 @@ GOOGLE_SECRET=your__secret
 GITHUB_ID=your_github_client_id
 GITHUB_SECRET=your_github_client_secret
 SESSION_SECRET=your_cookie_secret
-
 FRONTEND_URL=http://localhost:5173
+GOOGLE_CALLBACK_URL=google_callback_url
+GITHUB_CALLBACK_URL=github_callback_url
 ```
 
 ### 4. Run the server
