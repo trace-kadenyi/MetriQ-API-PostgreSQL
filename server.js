@@ -11,6 +11,21 @@ const path = require("path");
 // port
 const port = process.env.PORT || 4000;
 
+// Add this RIGHT BEFORE your routes in server.js:
+app.get("/api/env-check", (req, res) => {
+  res.json({
+    openRouterKeyExists: !!process.env.OPENROUTER_API_KEY,
+    openRouterKeyPreview: process.env.OPENROUTER_API_KEY 
+      ? process.env.OPENROUTER_API_KEY.substring(0, 15) + "..."
+      : "NOT SET",
+    nodeEnv: process.env.NODE_ENV,
+    allEnvKeys: Object.keys(process.env).filter(key => 
+      key.includes('OPENROUTER') || key.includes('KEY')
+    ),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // routes
 const passport = require("./auth/passport");
 const authRoutes = require("./auth/routes");
