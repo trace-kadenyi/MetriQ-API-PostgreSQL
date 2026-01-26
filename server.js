@@ -34,7 +34,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 
 // body-parser
@@ -59,7 +59,7 @@ app.use(
       mongoUrl: process.env.DATABASE_URI,
       ttl: 24 * 60 * 60,
     }),
-  })
+  }),
 );
 
 // passport auth
