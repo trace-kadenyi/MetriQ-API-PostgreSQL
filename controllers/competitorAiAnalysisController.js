@@ -14,7 +14,7 @@ const createAICompetitorAnalysis = async (req, res) => {
     ].join("\n");
   };
 
-  const userLine = describe("User’s site", comparison.userScores);
+  const userLine = describe("User's site", comparison.userScores);
   const compLines = comparison.competitors
     .filter((c) => c.scores && !c.error)
     .map((c) => describe(c.label || c.url, c.scores))
@@ -28,7 +28,7 @@ const createAICompetitorAnalysis = async (req, res) => {
       role: "system",
       content: [
         "You are an expert in Google Lighthouse/PageSpeed auditing.",
-        "Compare the user’s website (first entry below) against the competitors.",
+        "Compare the user's website (first entry below) against the competitors.",
         "Output:",
         "1. Executive summary (≤ 4 sentences).",
         "2. Findings grouped by **Performance · Accessibility · SEO · Best Practices**.",
@@ -52,32 +52,44 @@ const createAICompetitorAnalysis = async (req, res) => {
     const { data } = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "deepseek/deepseek-chat:free",
+        model: "deepseek/deepseek-chat",
         messages,
         temperature: 0.25,
+        max_tokens: 1500,
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
+          "HTTP-Referer": "http://localhost:3000",
+          "X-Title": "MetriQ Competitor Analysis",
         },
-      }
+        timeout: 90000,
+      },
     );
 
     const analysis = data.choices?.[0]?.message?.content ?? "";
     res.json({ analysis, format });
   } catch (err) {
     const statusCode = err?.response?.status;
-    const code = err?.response?.data?.error?.code;
-    const message = err?.response?.data?.error?.message;
+    const code = err?.code; // axios error code
+    const message = err?.response?.data?.error?.message || err.message;
 
     console.error("DeepSeek API error:", err.response?.data || err.message);
 
-    if (statusCode === 429 && code === "429") {
-      return res.status(429).json({
-        error: "RATE_LIMIT",
+    // Handle timeout specifically
+    if (code === "ECONNABORTED" && message.includes("timeout")) {
+      return res.status(504).json({
+        error: "TIMEOUT",
         message:
-          "DeepSeek usage limit exceeded. Please try again tomorrow or upgrade your plan.",
+          "AI analysis is taking too long. Please try with less data or try again.",
+      });
+    }
+
+    if (statusCode === 429) {
+      return res.status(429).json({
+        error: "QUOTA_EXCEEDED",
+        message: "AI usage limit exceeded. Please try again tomorrow.",
       });
     }
 
