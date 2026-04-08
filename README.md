@@ -12,7 +12,6 @@ The backend server for **MetriQ**, a performance benchmarking platform that anal
 - Axios (API requests)
 - OpenRouter + DeepSeek (AI summaries)
 - Google PageSpeed Insights API (site audits)
-- Deployed on Vercel
 
 ---
 
