@@ -1,10 +1,15 @@
 {
-  "name": "metriq-api",
+  "name": "metriq-api-postgres",
   "version": "1.0.0",
-  "main": "server.js",
+  "description": "Backend API for MetriQ — PostgreSQL + Prisma + TypeScript",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
   },
   "keywords": [
     "metrics",
@@ -20,23 +25,19 @@
   ],
   "author": "Tracey Kadenyi",
   "license": "ISC",
-  "description": "Backend API for MetriQ — a web performance auditing and comparison tool using Google PageSpeed Insights and AI-powered summaries.",
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "axios": "^1.9.0",
-    "bcrypt": "^6.0.0",
-    "body-parser": "^2.2.0",
-    "connect-mongo": "^5.1.0",
-    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "express-session": "^1.18.1",
-    "mongoose": "^8.15.1",
-    "passport": "^0.7.0",
-    "passport-github2": "^0.1.12",
-    "passport-google-oauth20": "^2.0.0"
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "prisma": "^5.22.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.0"
   }
 }
