@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,81 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  provider   String
+  providerId String
+  email      String?
+  name       String?
+  avatar     String?
+  theme      String   @default("light")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([provider, providerId])
+  @@map("users")
+}
+
+model Url {
+  id        String   @id @default(uuid())
+  url       String   @unique
+  createdAt DateTime @default(now())
+
+  reports       Report[]
+  favourites    Favourite[]
+  comparisons   ComparisonUrl[]
+
+  @@map("urls")
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  urlId     String
+  url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
+  rawData   Json     @db.JsonB
+  createdAt DateTime @default(now())
+
+  @@index([urlId])
+  @@map("reports")
+}
+
+model Favourite {
+  id        String   @id @default(uuid())
+  anonId    String?
+  urlId     String
+  url       Url      @relation(fields: [urlId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([anonId, urlId])
+  @@index([anonId])
+  @@map("favourites")
+}
+
+model Comparison {
+  id          String          @id @default(uuid())
+  anonId      String?
+  userSiteUrl String
+  userScores  Json            @db.JsonB
+  createdAt   DateTime        @default(now())
+
+  competitors ComparisonUrl[]
+
+  @@index([anonId])
+  @@map("comparisons")
+}
+
+model ComparisonUrl {
+  id           String     @id @default(uuid())
+  comparisonId String
+  comparison   Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+  urlId        String
+  url          Url        @relation(fields: [urlId], references: [id])
+  label        String?
+  scores       Json?      @db.JsonB
+  error        Boolean    @default(false)
+
+  @@index([comparisonId])
+  @@map("comparison_urls")
 }
