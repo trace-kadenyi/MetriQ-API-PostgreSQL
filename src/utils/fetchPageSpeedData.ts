@@ -1,30 +1,6 @@
 import axios from "axios";
 import { getUserFriendlySuggestions } from "./getUserFriendlySuggestions";
-
-export interface ScoreBlock {
-  performance: number;
-  accessibility: number;
-  seo: number;
-  bestPractices: number;
-}
-
-export interface MetricEntry {
-  value: string;
-  status: string;
-}
-
-export interface Suggestion {
-  title: string;
-  score: number | null;
-  displayValue: string | null;
-  description: string;
-}
-
-export interface PageSpeedResult {
-  scores: ScoreBlock;
-  metrics: Record<string, MetricEntry>;
-  suggestions: Suggestion[];
-}
+import { ScoreBlock, MetricEntry, Suggestion, PageSpeedResult } from "../types";
 
 export const fetchPageSpeedData = async (
   url: string,

@@ -1,4 +1,4 @@
-import { Suggestion } from "./fetchPageSpeedData";
+import { Suggestion } from "../types";
 
 interface Audit {
   title?: string;
