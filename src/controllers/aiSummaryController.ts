@@ -1,8 +1,16 @@
-const axios = require("axios");
+import { Request, Response } from "express";
+import axios, { AxiosError } from "axios";
 
-const createAISummary = async (req, res) => {
-  const { inputText } = req.body;
-  if (!inputText) return res.status(400).json({ error: "No text" });
+export const createAISummary = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  const { inputText } = req.body as { inputText?: string };
+
+  if (!inputText) {
+    res.status(400).json({ error: "No text" });
+    return;
+  }
 
   try {
     const response = await axios.post(
@@ -45,57 +53,65 @@ const createAISummary = async (req, res) => {
     const summary = response.data.choices?.[0]?.message?.content || "";
     res.json({ summary });
   } catch (err) {
-    console.error("DeepSeek API error:", err.response?.data || err.message);
+    const axiosErr = err as AxiosError;
+    console.error(
+      "DeepSeek API error:",
+      axiosErr.response?.data || axiosErr.message,
+    );
 
     // Check for timeout specifically
-    if (err.code === "ECONNABORTED" && err.message.includes("timeout")) {
-      return res.status(504).json({
+    if (
+      axiosErr.code === "ECONNABORTED" &&
+      axiosErr.message.includes("timeout")
+    ) {
+      res.status(504).json({
         error: "TIMEOUT",
         message: "AI analysis is taking too long. Please try with less data.",
       });
+      return;
     }
 
     // Check for network errors
-    if (err.code === "ECONNREFUSED" || err.code === "ENOTFOUND") {
-      return res.status(503).json({
+    if (axiosErr.code === "ECONNREFUSED" || axiosErr.code === "ENOTFOUND") {
+      res.status(503).json({
         error: "SERVICE_UNAVAILABLE",
         message:
           "AI service is temporarily unavailable. Please try again later.",
       });
+      return;
     }
 
     // API-specific errors
-    if (err.response?.status === 429) {
-      return res.status(429).json({
+    if (axiosErr.response?.status === 429) {
+      res.status(429).json({
         error: "QUOTA_EXCEEDED",
         message: "AI quota exceeded. Please try again tomorrow.",
       });
+      return;
     }
 
-    if (err.response?.status === 401) {
-      return res.status(401).json({
+    if (axiosErr.response?.status === 401) {
+      res.status(401).json({
         error: "INVALID_API_KEY",
         message: "Invalid API key. Please check your OpenRouter settings.",
       });
+      return;
     }
 
     // Model-specific errors (e.g., model not found)
-    if (err.response?.status === 404) {
-      return res.status(404).json({
+    if (axiosErr.response?.status === 404) {
+      res.status(404).json({
         error: "MODEL_NOT_FOUND",
         message: "The AI model is not available. Please try a different model.",
       });
+      return;
     }
 
     // Generic error
     res.status(500).json({
       error: "AI_SUMMARIZATION_FAILED",
       message: "AI summarization failed. Please try again.",
-      details: err.message,
+      details: axiosErr.message,
     });
   }
-};
-
-module.exports = {
-  createAISummary,
 };
