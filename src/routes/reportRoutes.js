@@ -1,14 +1,12 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
 
-const {
-  createReport,
-  getReportsByUrl,
-} = require("../controllers/reportController");
+import { createReport, getReportsByUrl } from "../controllers/reportController";
+
+const router = Router();
 
 // post route
 router.post("/report", createReport);
 // get route
 router.get("/report", getReportsByUrl);
 
-module.exports = router;
+export default router;
