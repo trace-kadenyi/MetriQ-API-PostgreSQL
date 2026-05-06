@@ -1,11 +1,12 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
 
-const {
+import {
   getFavourites,
   toggleFavourite,
   claimFavourites,
-} = require("../controllers/favouriteController");
+} from "../controllers/favouriteController";
+
+const router = Router();
 
 // get route
 router.get("/", getFavourites);
@@ -14,4 +15,4 @@ router.post("/toggle", toggleFavourite);
 //handle transfer from anon to user
 router.post("/claim", claimFavourites);
 
-module.exports = router;
+export default router;
